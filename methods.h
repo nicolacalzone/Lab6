@@ -11,5 +11,4 @@ void BruteForceMethod(cv::Mat img1, cv::Mat img2);
 void SURFmethod(cv::Mat img1, cv::Mat img2);
 void SIFTmethod(cv::Mat img1, cv::Mat img2);
 
-
 #endif

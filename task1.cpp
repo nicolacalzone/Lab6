@@ -1,6 +1,6 @@
 #include <iostream>
 #include <opencv2/core/core.hpp>
-#include <opencv2/xfeatures2d.hpp>
+// #include <opencv2/xfeatures2d.hpp>
 #include <opencv2/features2d.hpp>
 #include "methods.h"
 #include <chrono>
@@ -88,7 +88,7 @@ void SURFmethod(cv::Mat img1, cv::Mat img2)
     cv::drawKeypoints(img1, keypoints, img_keypoints);
 
     // Display the result
-    cv::imshow("Features", img_keypoints);
+    cv::imshow("SURF", img_keypoints);
     cv::waitKey(0);
 }
 
@@ -107,6 +107,6 @@ void SIFTmethod(cv::Mat img1, cv::Mat img2)
     cv::drawKeypoints(img1, keypoints, img_keypoints);
 
     // Display the result
-    cv::imshow("Features", img_keypoints);
+    cv::imshow("SIFT", img_keypoints);
     cv::waitKey(0);
 }
