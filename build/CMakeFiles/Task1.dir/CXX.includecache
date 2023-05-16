@@ -59,6 +59,8 @@ opencv2/highgui.hpp
 -
 opencv2/xfeatures2d.hpp
 -
+sys/stat.h
+-
 utils.h
 /home/nicola/opencv/Lab6/utils.h
 descriptor_methods.hpp

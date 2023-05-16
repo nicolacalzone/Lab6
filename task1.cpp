@@ -5,7 +5,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/xfeatures2d.hpp>
-
+#include <sys/stat.h>
 #include "utils.h"
 #include "descriptor_methods.hpp"
 #include "matcher_methods.hpp"
@@ -15,8 +15,6 @@ using std::endl;
 
 int main(int argc, char *argv[])
 {
-    cv::Mat img1, img2;
-
     if (argc == 1)
     {
         cout << "\nNo images passed as arguments.";
@@ -36,6 +34,9 @@ int main(int argc, char *argv[])
             cout << "argv[" << i << "]: " << argv[i] << endl;
     }
 
+    mkdir("../ResultImages", 0777); // 0777 is meant to set editing permissions to the directory with POSIX lib
+
+    cv::Mat img1, img2;
     img1 = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
     img2 = cv::imread(argv[2], cv::IMREAD_GRAYSCALE);
 

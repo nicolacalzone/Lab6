@@ -18,6 +18,7 @@ void bruteForceHamming(cv::Mat img1, cv::Mat img2, Result res)
     cv::drawMatches(img1, res.kp1, img2, res.kp2, matches, imgMatches);
 
     cv::imshow("Hamming - ORB", imgMatches);
+    cv::imwrite("../ResultImages/Hamming - ORB.png", imgMatches);
 
     cv::waitKey();
 }
@@ -47,7 +48,9 @@ void bruteForceHammingSorted(cv::Mat img1, cv::Mat img2, Result res)
     cv::Mat imgMatches;
     cv::drawMatches(img1, res.kp1, img2, res.kp2, matches, imgMatches);
 
-    cv::imshow("Hamming - ORB", imgMatches);
+    cv::imshow("Hamming - ORB Sorted", imgMatches);
+    cv::imwrite("../ResultImages/Hamming - ORB Sorted.png", imgMatches);
+
     cv::waitKey();
 }
 
@@ -75,8 +78,11 @@ void bruteForceKNN(cv::Mat img1, cv::Mat img2, Result res, int flag)
 
     if (flag == 0)
         cv::imshow("KNN - Matching - SURF", imgMatches);
+    cv::imwrite("../ResultImages/KNN - Matching - SURF.png", imgMatches);
+
     if (flag == 1)
         cv::imshow("KNN - Matching - SIFT", imgMatches);
+    cv::imwrite("../ResultImages/KNN - Matching - SIFT.png", imgMatches);
 
     cv::waitKey();
 }
@@ -109,7 +115,7 @@ void flannMatching(cv::Mat img1, cv::Mat img2, Result res, int flag)
 
     for (size_t i = 0; i < matches.size(); i++)
     {
-        if (matches[i][0].distance < 0.3 * matches[i][1].distance)
+        if (matches[i][0].distance < 0.6 * matches[i][1].distance)
         {
             matchesMask[i] = 1;
         }
