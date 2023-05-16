@@ -39,19 +39,21 @@ int main(int argc, char *argv[])
     img1 = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
     img2 = cv::imread(argv[2], cv::IMREAD_GRAYSCALE);
 
-    Result resSURF, resSIFT;
+    Result resSURF, resSIFT, resORB;
 
     resSURF = useSURF(img1, img2);
     resSIFT = useSIFT(img1, img2);
+    resORB = useORB(img1, img2);
 
-    bruteForceHamming(img1, img2, resSURF, 0);
-    bruteForceHamming(img1, img2, resSIFT, 1);
+    bruteForceHammingSorted(img1, img2, resORB);
+    bruteForceHamming(img1, img2, resORB);
 
     bruteForceKNN(img1, img2, resSURF, 0);
     bruteForceKNN(img1, img2, resSIFT, 1);
 
-    flannMatching(img1, img2, resSIFT, 0);
-    flannMatching(img1, img2, resSIFT, 1);
+    // disfunctioning, does not filter lines
+    // flannMatching(img1, img2, resSIFT, 0);
+    // flannMatching(img1, img2, resSIFT, 1);
 
     return 0;
 }

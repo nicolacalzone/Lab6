@@ -3,6 +3,7 @@
 
 CMakeFiles/Task1.dir/descriptor_methods.cpp.o
  /home/nicola/opencv/Lab6/descriptor_methods.cpp
+ /home/nicola/opencv/Lab6/descriptor_methods.hpp
  /home/nicola/opencv/Lab6/utils.h
  /usr/local/include/opencv4/opencv2/core.hpp
  /usr/local/include/opencv4/opencv2/core/base.hpp

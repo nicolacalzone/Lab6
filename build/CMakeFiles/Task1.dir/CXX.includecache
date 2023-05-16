@@ -17,6 +17,8 @@ opencv2/xfeatures2d.hpp
 -
 utils.h
 /home/nicola/opencv/Lab6/utils.h
+descriptor_methods.hpp
+/home/nicola/opencv/Lab6/descriptor_methods.hpp
 
 /home/nicola/opencv/Lab6/descriptor_methods.hpp
 opencv2/core.hpp
