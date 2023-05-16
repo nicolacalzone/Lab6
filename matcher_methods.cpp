@@ -1,8 +1,60 @@
 #include <array>
+#include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/xfeatures2d.hpp>
 #include "utils.h"
+
+const std::string dir = "../ResultImages/";
+
+cv::Mat checkTransformRotation(cv::Mat img1, cv::Mat img2, std::vector<cv::DMatch> matches, Result res)
+{
+    const int MIN_MATCH_COUNT = 10; // Set this to the desired value
+    std::vector<char> matchesMask;
+
+    if (matches.size() > MIN_MATCH_COUNT)
+    {
+        std::vector<cv::Point2f> src_pts, dst_pts;
+        for (const auto &m : matches)
+        {
+            src_pts.push_back(res.kp1[m.queryIdx].pt);
+            dst_pts.push_back(res.kp2[m.trainIdx].pt);
+        }
+
+        cv::Mat mask;
+        cv::Mat M = cv::findHomography(src_pts, dst_pts, cv::RANSAC, 5.0, mask);
+        matchesMask = mask.reshape(1, -1);
+
+        int h = img1.rows;
+        int w = img1.cols;
+        std::vector<cv::Point2f> pts = {{0, 0}, {0, h - 1}, {w - 1, h - 1}, {w - 1, 0}};
+        std::vector<cv::Point2f> dst;
+        cv::perspectiveTransform(pts, dst, M);
+
+        std::vector<cv::Point> poly;
+        for (const auto &p : dst)
+        {
+            poly.push_back(cv::Point(static_cast<int>(p.x), static_cast<int>(p.y)));
+        }
+        cv::polylines(img2, poly, true, cv::Scalar(255), 3, cv::LINE_AA);
+    }
+    else
+    {
+        std::cout << "Not enough matches are found - " << matches.size() << "/" << MIN_MATCH_COUNT << std::endl;
+        std::vector<char> matchesMask;
+    }
+
+    cv::Mat img3;
+    cv::drawMatches(img1, res.kp1, img2, res.kp2, matches, img3,
+                    cv::Scalar(0, 255, 0), cv::Scalar::all(-1), matchesMask,
+                    cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+
+    cv::imshow("Matches", img3);
+    cv::waitKey();
+}
 
 void bruteForceHamming(cv::Mat img1, cv::Mat img2, Result res)
 {
@@ -15,10 +67,13 @@ void bruteForceHamming(cv::Mat img1, cv::Mat img2, Result res)
     matcher.match(res.descriptor1, res.descriptor2, matches);
 
     cv::Mat imgMatches;
-    cv::drawMatches(img1, res.kp1, img2, res.kp2, matches, imgMatches);
+    // cv::drawMatches(img1, res.kp1, img2, res.kp2, matches, imgMatches);
+    imgMatches = checkTransformRotation(img1, img2, matches, res);
 
-    cv::imshow("Hamming - ORB", imgMatches);
-    cv::imwrite("../ResultImages/Hamming - ORB.png", imgMatches);
+    std::string file = "Hamming - ORB.png";
+
+    cv::imshow(file, imgMatches);
+    cv::imwrite(dir + file, imgMatches);
 
     cv::waitKey();
 }
@@ -46,10 +101,13 @@ void bruteForceHammingSorted(cv::Mat img1, cv::Mat img2, Result res)
     std::sort(matches.begin(), matches.end());
 
     cv::Mat imgMatches;
-    cv::drawMatches(img1, res.kp1, img2, res.kp2, matches, imgMatches);
+    // cv::drawMatches(img1, res.kp1, img2, res.kp2, matches, imgMatches);
+    imgMatches = checkTransformRotation(img1, img2, matches, res);
 
-    cv::imshow("Hamming - ORB Sorted", imgMatches);
-    cv::imwrite("../ResultImages/Hamming - ORB Sorted.png", imgMatches);
+    std::string file = "Hamming - ORB Sorted.png";
+
+    cv::imshow(file, imgMatches);
+    cv::imwrite(dir + file, imgMatches);
 
     cv::waitKey();
 }
@@ -74,17 +132,24 @@ void bruteForceKNN(cv::Mat img1, cv::Mat img2, Result res, int flag)
     }
 
     cv::Mat imgMatches;
-    cv::drawMatches(img1, res.kp1, img2, res.kp2, goodMatches, imgMatches);
+    // cv::drawMatches(img1, res.kp1, img2, res.kp2, matches, imgMatches);
+    imgMatches = checkTransformRotation(img1, img2, goodMatches, res);
+
+    std::string file = "KNN - Matching - SURF.png";
 
     if (flag == 0)
-        cv::imshow("KNN - Matching - SURF", imgMatches);
-    cv::imwrite("../ResultImages/KNN - Matching - SURF.png", imgMatches);
+    {
+        cv::imshow(file, imgMatches);
+        cv::imwrite(dir + file, imgMatches);
+        cv::waitKey();
+    }
 
     if (flag == 1)
-        cv::imshow("KNN - Matching - SIFT", imgMatches);
-    cv::imwrite("../ResultImages/KNN - Matching - SIFT.png", imgMatches);
-
-    cv::waitKey();
+    {
+        cv::imshow(file, imgMatches);
+        cv::imwrite(dir + file, imgMatches);
+        cv::waitKey();
+    }
 }
 
 /*
@@ -95,7 +160,7 @@ void bruteForceKNN(cv::Mat img1, cv::Mat img2, Result res, int flag)
  *
  ***********************************
  */
-void flannMatching(cv::Mat img1, cv::Mat img2, Result res, int flag)
+/*void flannMatching(cv::Mat img1, cv::Mat img2, Result res, int flag)
 {
 
     // Convert images to 8-bit unsigned integer type
@@ -122,7 +187,8 @@ void flannMatching(cv::Mat img1, cv::Mat img2, Result res, int flag)
     }
 
     cv::Mat imgMatches;
-    cv::drawMatches(img1, res.kp1, img2, res.kp2, matches, imgMatches);
+    // cv::drawMatches(img1, res.kp1, img2, res.kp2, matches, imgMatches);
+    imgMatches = checkTransformRotation(img1, img2, matches, res);
 
     if (flag == 0)
         cv::imshow("FLANN - Matching - SURF", imgMatches);
@@ -131,3 +197,5 @@ void flannMatching(cv::Mat img1, cv::Mat img2, Result res, int flag)
 
     cv::waitKey();
 }
+
+*/
